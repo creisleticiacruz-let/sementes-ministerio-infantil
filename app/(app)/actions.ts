@@ -89,10 +89,12 @@ export async function inviteUser(f: FormData) {
   await assertAdmin()
   const admin = createAdminClient()
   const email = s(f, 'email')
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? '').replace(/\/$/, '')
+  if (!site) throw new Error('Defina NEXT_PUBLIC_SITE_URL no Vercel e faça Redeploy.')
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
     data: { name: s(f, 'name') },
-    redirectTo: `${site}/auth/callback?next=/redefinir-senha`,
+    // convite do admin volta com a sessão no fragmento da URL (#), lido pelo navegador
+    redirectTo: `${site}/redefinir-senha`,
   })
   if (error) throw new Error(error.message)
   const role = s(f, 'role') || 'voluntario'
