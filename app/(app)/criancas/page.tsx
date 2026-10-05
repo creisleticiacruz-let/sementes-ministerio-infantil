@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { requireProfile, today } from '@/lib/auth'
 import { Card, Empty } from '@/lib/ui'
 import { markPresence } from '../actions'
+import DeleteChildButton from './delete-child-button'
 
 export default async function Criancas({ searchParams }: { searchParams: Promise<{ turma?: string; data?: string }> }) {
   const sp = await searchParams
@@ -34,7 +35,8 @@ export default async function Criancas({ searchParams }: { searchParams: Promise
         {kids?.length ? kids.map((k) => {
           const r = byChild.get(k.id)
           return (
-            <form key={k.id} action={markPresence} className="flex flex-wrap items-center gap-3 py-2 border-b last:border-0 text-sm">
+            <div key={k.id} className="flex items-center gap-2 border-b last:border-0">
+            <form action={markPresence} className="flex flex-wrap items-center gap-3 py-2 text-sm flex-1">
               <input type="hidden" name="child_id" value={k.id} />
               <input type="hidden" name="date" value={date} />
               <span className="w-40 font-medium">{k.name}</span>
@@ -45,6 +47,8 @@ export default async function Criancas({ searchParams }: { searchParams: Promise
               <span className="ml-auto">⭐ {r?.total_stars ?? 0}</span>
               {canMark && <button className="bg-emerald-600 text-white rounded px-3 py-1">Salvar</button>}
             </form>
+            {profile.role === 'admin' && <DeleteChildButton id={k.id} name={k.name} />}
+            </div>
           )
         }) : <Empty>Nenhuma criança nesta turma.</Empty>}
       </Card>

@@ -125,3 +125,13 @@ export async function setUserRole(f: FormData) {
   await supabase.from('users').update({ role: s(f, 'role') }).eq('id', s(f, 'id'))
   revalidatePath('/admin')
 }
+
+export async function deleteChild(f: FormData) {
+  const supabase = await assertAdmin()
+  // presença, estrelas, resgates e vínculos com responsáveis são apagados em cascata pelo banco
+  const { error } = await supabase.from('children').delete().eq('id', s(f, 'id'))
+  if (error) throw new Error(error.message)
+  revalidatePath('/criancas')
+  revalidatePath('/aniversarios')
+  revalidatePath('/espaco-responsaveis')
+}
