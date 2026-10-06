@@ -1,0 +1,6 @@
+{
+  "crons": [
+    { "path": "/api/cron/lembretes?tipo=equipe", "schedule": "0 11 * * 1,5" },
+    { "path": "/api/cron/lembretes?tipo=sabado", "schedule": "0 12 * * 6" }
+  ]
+}
